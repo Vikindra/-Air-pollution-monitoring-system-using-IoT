@@ -1,61 +1,51 @@
-#include <LiquidCrystal.h>
-
+#include <LiquidCrystal .h>
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
-int sensor = A0;
-int val = 0;
-int limit = 40;
-
+int pin8 = 8;
+int analogPin =A0;
+int sensorValue = 0;
 void setup() {
-  Serial.begin(9600);
-  pinMode(7, OUTPUT);
-  pinMode(6, OUTPUT);
-  digitalWrite(6, LOW);
-  digitalWrite(7, LOW);
+  pinMode(analogPin, INPUT);
+  pinMode(pin8, OUTPUT(;
   lcd.begin(16, 2);
-  lcd.print("Air Monitoring");
-  lcd.setCursor(0, 1);
-  lcd.print("System");
-  delay(500); 
-  lcd.clear();
+  lcd.print("What is the air ");
+  lcd.print("quality today?");
+  Serial.begin(9600);
+  lcd.display();
 }
-
 void loop() {
-  val = analogRead(sensor);
-  val = map(val, 306, 750, 0, 100);
-  Serial.println(val);
-  if(val<limit){
-    Serial.println("HarmfulGas is Not Detected");
-  }
-  else {
-    Serial.println("HarmfulGas is Detected");
-  }
-
-  if (val > limit) {
-    lcd.setCursor(0, 0);
-    lcd.print("Harmful Gas ");
-    lcd.setCursor(0, 1);
-    lcd.print("is Detected");
-    digitalWrite(7, HIGH);
-    digitalWrite(6, LOW);
-    tone(8, 1000);
-    delay(100);
-    noTone(8);                    
-    delay(100);
-  }
-  if (val < limit) {
-    lcd.setCursor(0, 0);
-    lcd.print("No Harmful Gas ");
-    lcd.setCursor(0, 1);
-    lcd.print("is Detected");
-    digitalWrite(7, HIGH);
-    digitalWrite(6, LOW);
-    delay(100);
-  }
-  else {
-    lcd.clear();
-    noTone(8);
-    digitalWrite(7, LOW);
-    digitalWrite(6, HIGH);
-  } 
+  delay(100) ;
+  sensorValue = analogRead(analogPin) ;
+  Serial.print("Air Quality in PPM = ") ;
+  Serial.println(sensorValue) ;
+  lcd.clear();
+  lcd.setCursor(0,0) ;
+  lcd.print ("Air Quality: ") ;
+  lcd.print (sensorValue) ;
+  if (sensorValue<=500)
+   {
+   Serial.print("Fresh Air ") ;
+   Serial.print ("\r\n") ;
+   lcd.setCursor(0,1) ;
+   lcd.print("Fresh Air") ;
+   }
+else if ( sensorValue>=500 && sensorValue<=650 )
+ {
+ Serial.print("Poor Air") ;
+ Serial.print ("\r\n") ;
+ lcd.setCursor(0,1) ;
+ lcd.print("Poor Air") ;
+ }
+else if (sensorValue>=650 )
+ {
+ Serial.print("Very Poor Air") ;
+ Serial.print ("\r\n") ;
+ lcd.setCursor(0,1) ;
+ lcd.print("Very Poor Air") ;
+ }
+if (sensorValue >650) {
+  digitalWrite(pin8, HIGH) ;
+}
+else {
+  digitalWrite(pin8, LOW) ;
+}
 }
